@@ -5,16 +5,14 @@ import java.util.ArrayList;
 import cell.Cell;
 
 public class Field {
-	//这个Field只管数据
-	
-	private Cell[][] field;
-	private int width;
 	private int height;
+	private int width;
+	private Cell[][] field;
 	
-	public Field(int width, int height){
-		field = new Cell[height][width];
-		this.width = width;
+	public Field(int height, int width){
 		this.height = height;
+		this.width = width;
+		field = new Cell[height][width];
 	}
 	
 	public int getHeight(){
@@ -27,32 +25,54 @@ public class Field {
 	
 	public Cell place(int row, int col, Cell cell){
 		field[row][col] = cell;
-		return field[row][col];
+		return cell;
+	}
+	
+	public Cell place(Location loc, Cell cell){
+		field[loc.getRow()][loc.getCol()] = cell;
+		return cell;
 	}
 	
 	public Cell get(int row, int col){
 		return field[row][col];
 	}
-
-	public Cell[] getNeighbors(int row, int col){
-		ArrayList<Cell> neighbors = new ArrayList<Cell>();
-		for(int i = -1; i < 2; i++)
-			for(int j = -1; j < 2; j++){
-				int r = row+i;
-				int c = col+j;
-				if(r>-1 && r<height && c>-1 && c<width && (r!=row || c!=col)){
-					//上次错在了这最后一个条件
-					neighbors.add(field[r][c]);
-				}
-			}
-		return neighbors.toArray(new Cell[neighbors.size()]);
-		//这个toArray()里面的参数设置了出来的Array的类型
+	
+	public Cell get(Location loc){
+		return field[loc.getRow()][loc.getCol()];
 	}
 	
-	public void clear(){
-		for(int i=0; i<height; i++)
-			for(int j=0; j<width; j++){
-				field[i][j] = null;
+	public void remove(Location loc){
+		field[loc.getRow()][loc.getCol()] = null;
+	}
+	
+	public void move(Location src, Location dest){		
+		field[dest.getRow()][dest.getCol()] = field[src.getRow()][src.getCol()];
+		field[src.getRow()][src.getCol()] = null;
+	}
+	
+	public Location[] getNeighbors(Location loc){
+		ArrayList<Location> neighbors = new ArrayList<Location>();
+		for ( int i = -1; i < 2; i++){
+			for ( int j = -1; j < 2; j++){
+				int r = loc.getRow() + i;
+				int c = loc.getCol() + j;
+				if ( r>-1 && r<height && c>-1 && c<width && !(i==0 && j==0)){
+					neighbors.add(new Location(r, c));
+				}
 			}
+		}
+		
+		return neighbors.toArray(new Location[neighbors.size()]);
+	}
+	
+	public Location[] getFreeNeighbors(Location loc){
+		Location[] neighbors = getNeighbors(loc);
+		ArrayList<Location> freeneighbors = new ArrayList<Location>();
+		for(Location l: neighbors){
+			if ( get(l) == null){
+				freeneighbors.add(l);
+			}
+		}
+		return freeneighbors.toArray(new Location[freeneighbors.size()]);
 	}
 }
