@@ -1,7 +1,11 @@
 package foxnrabbit;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import animal.Animal;
@@ -34,6 +38,16 @@ public class FoxAndRabbit {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.add(view);
+		JButton btnStep = new JButton("单步");
+		btnStep.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				step();
+				view.repaint();
+			}
+		});
+		frame.add(btnStep, BorderLayout.NORTH);
 		frame.pack();
 		frame.setVisible(true);
 	}
@@ -107,8 +121,7 @@ public class FoxAndRabbit {
 	}
 	
 	public static void main(String[] args) {
-		FoxAndRabbit fnr = new FoxAndRabbit(50);
-		fnr.start(100);
+		new FoxAndRabbit(50);
 	}
 
 }
